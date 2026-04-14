@@ -1,3 +1,5 @@
+# Horoszkóp applikáció deploy workflow
+# Szükséges GitHub Secrets: GHCR_TOKEN, JCLOUD_KUBECONFIG (vagy KUBECONFIG)
 name: Build and Deploy to jcloud.jedlik.cloud
 
 on:
