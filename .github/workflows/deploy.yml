@@ -13,6 +13,7 @@ permissions:
 env:
   NAMESPACE: horoszkop
   APP_NAME: horoszkop-web
+  KUBECONFIG: /home/runner/.kube/config
 
 jobs:
   build-and-deploy:
@@ -52,7 +53,22 @@ jobs:
       - name: Configure kubeconfig
         run: |
           mkdir -p "$HOME/.kube"
-          echo "${{ secrets.JCLOUD_KUBECONFIG }}" > "$HOME/.kube/config"
+          if [ -z "${{ secrets.JCLOUD_KUBECONFIG }}" ]; then
+            echo "JCLOUD_KUBECONFIG secret is empty or missing"
+            exit 1
+          fi
+
+          # Support both raw kubeconfig YAML and base64-encoded kubeconfig.
+          if echo "${{ secrets.JCLOUD_KUBECONFIG }}" | base64 -d > "$HOME/.kube/config" 2>/dev/null; then
+            echo "Loaded kubeconfig from base64 secret"
+          else
+            printf "%b" "${{ secrets.JCLOUD_KUBECONFIG }}" > "$HOME/.kube/config"
+            echo "Loaded kubeconfig from raw YAML secret"
+          fi
+
+          chmod 600 "$HOME/.kube/config"
+          kubectl config get-contexts
+          kubectl cluster-info
 
       - name: Ensure namespace and image pull secret
         run: |
