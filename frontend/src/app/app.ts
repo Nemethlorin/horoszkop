@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
+
 export class App {
   protected readonly title = 'Csillagjegy Kalkulator';
   protected readonly birthDate = signal('');
