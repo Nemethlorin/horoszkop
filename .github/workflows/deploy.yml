@@ -13,7 +13,7 @@ permissions:
   packages: write
 
 env:
-  NAMESPACE: horoszkop
+  NAMESPACE: nemeth-lorin-dorina
   APP_NAME: horoszkop-web
   KUBECONFIG: /home/runner/.kube/config
 
@@ -78,7 +78,6 @@ jobs:
 
           chmod 600 "$HOME/.kube/config"
           kubectl config get-contexts
-          kubectl cluster-info
 
       - name: Ensure namespace and image pull secret
         run: |

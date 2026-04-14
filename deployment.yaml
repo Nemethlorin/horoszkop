@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: horoszkop-web
-  namespace: horoszkop
+  namespace: nemeth-lorin-dorina
 spec:
   replicas: 1
   selector:
@@ -38,7 +38,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: horoszkop-web
-  namespace: horoszkop
+  namespace: nemeth-lorin-dorina
 spec:
   selector:
     app: horoszkop-web
@@ -52,7 +52,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: horoszkop-web
-  namespace: horoszkop
+  namespace: nemeth-lorin-dorina
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
