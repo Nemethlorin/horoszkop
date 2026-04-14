@@ -1,0 +1,72 @@
+name: Build and Deploy to jcloud.jedlik.cloud
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  NAMESPACE: horoszkop
+  APP_NAME: horoszkop-web
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: |
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "image=ghcr.io/${OWNER_LOWER}/horoszkop:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "latest=ghcr.io/${OWNER_LOWER}/horoszkop:latest" >> "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}
+            ${{ steps.meta.outputs.latest }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p "$HOME/.kube"
+          echo "${{ secrets.JCLOUD_KUBECONFIG }}" > "$HOME/.kube/config"
+
+      - name: Ensure namespace and image pull secret
+        run: |
+          kubectl get ns "$NAMESPACE" || kubectl create ns "$NAMESPACE"
+          kubectl -n "$NAMESPACE" create secret docker-registry ghcr-auth \
+            --docker-server=ghcr.io \
+            --docker-username="${{ github.repository_owner }}" \
+            --docker-password="${{ secrets.GHCR_TOKEN }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply manifests
+        run: kubectl apply -f deployment.yaml
+
+      - name: Update deployment image
+        run: |
+          kubectl -n "$NAMESPACE" set image deployment/"$APP_NAME" "$APP_NAME"="${{ steps.meta.outputs.image }}"
+          kubectl -n "$NAMESPACE" rollout status deployment/"$APP_NAME" --timeout=180s

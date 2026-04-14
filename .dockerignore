@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+.git
+.github
+.vscode
+frontend/.angular
+frontend/dist
+npm-debug.log*
+Dockerfile*

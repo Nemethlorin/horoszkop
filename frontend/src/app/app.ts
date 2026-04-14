@@ -15,7 +15,7 @@ export class App {
   protected readonly loading = signal(false);
   protected readonly error = signal('');
 
-  private readonly apiBaseUrl = 'http://localhost:3000';
+  private readonly apiBaseUrl = '.';
 
   constructor(private readonly http: HttpClient) {}
 
