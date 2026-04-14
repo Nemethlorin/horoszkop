@@ -51,18 +51,26 @@ jobs:
         uses: azure/setup-kubectl@v4
 
       - name: Configure kubeconfig
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.JCLOUD_KUBECONFIG }}
+          KUBE_CONFIG_DATA_ALT: ${{ secrets.KUBECONFIG }}
         run: |
           mkdir -p "$HOME/.kube"
-          if [ -z "${{ secrets.JCLOUD_KUBECONFIG }}" ]; then
-            echo "JCLOUD_KUBECONFIG secret is empty or missing"
+          RAW_KUBE_CONFIG="$KUBE_CONFIG_DATA"
+          if [ -z "$RAW_KUBE_CONFIG" ]; then
+            RAW_KUBE_CONFIG="$KUBE_CONFIG_DATA_ALT"
+          fi
+
+          if [ -z "$RAW_KUBE_CONFIG" ]; then
+            echo "JCLOUD_KUBECONFIG and KUBECONFIG secrets are both empty or missing"
             exit 1
           fi
 
           # Support both raw kubeconfig YAML and base64-encoded kubeconfig.
-          if echo "${{ secrets.JCLOUD_KUBECONFIG }}" | base64 -d > "$HOME/.kube/config" 2>/dev/null; then
+          if echo "$RAW_KUBE_CONFIG" | base64 -d > "$HOME/.kube/config" 2>/dev/null; then
             echo "Loaded kubeconfig from base64 secret"
           else
-            printf "%b" "${{ secrets.JCLOUD_KUBECONFIG }}" > "$HOME/.kube/config"
+            printf "%b" "$RAW_KUBE_CONFIG" > "$HOME/.kube/config"
             echo "Loaded kubeconfig from raw YAML secret"
           fi
 

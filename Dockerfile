@@ -3,7 +3,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ ./
-RUN npm run build -- --base-href /horoszkop/
+RUN npm run build
 
 FROM node:20-alpine AS backend-build
 WORKDIR /app/backend
