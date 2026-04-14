@@ -1,0 +1,25 @@
+﻿<main class="page">
+  <section class="card">
+    <h1>{{ title }}</h1>
+    <p class="subtitle">Add meg a szuletesi datumodat, es megmondom a csillagjegyed.</p>
+
+    <label for="birthDate">Szuletesi datum</label>
+    <input
+      id="birthDate"
+      type="date"
+      [value]="birthDate()"
+      (change)="onDateChange($event)"
+    />
+
+    <button type="button" (click)="findSign()" [disabled]="loading()">
+      {{ loading() ? 'Lekerdezes...' : 'Csillagjegy kiszamitasa' }}
+    </button>
+
+    <p class="error" *ngIf="error()">{{ error() }}</p>
+
+    <div class="result" *ngIf="zodiacSign()">
+      <h2>Eredmeny</h2>
+      <p>A csillagjegyed: <strong>{{ zodiacSign() }}</strong></p>
+    </div>
+  </section>
+</main>
