@@ -81,7 +81,6 @@ jobs:
 
       - name: Ensure namespace and image pull secret
         run: |
-          kubectl get ns "$NAMESPACE" || kubectl create ns "$NAMESPACE"
           kubectl -n "$NAMESPACE" create secret docker-registry ghcr-auth \
             --docker-server=ghcr.io \
             --docker-username="${{ github.repository_owner }}" \
