@@ -29,7 +29,7 @@ function isValidDate(month, day, year) {
     return false;
   }
 
-  if (year < 1900 || year > 2100 || month < 1 || month > 12 || day < 1) {
+  if (year < 1900 || year > 2101 || month < 1 || month > 12 || day < 1) {
     return false;
   }
 

@@ -28,12 +28,14 @@
   padding: 28px;
   display: grid;
   gap: 12px;
+  background-color: #b32727ad;
 }
 
 h1 {
   margin: 0;
   color: var(--ink);
   font-size: 1.9rem;
+  color: #b32727;
 }
 
 .subtitle {
@@ -65,7 +67,7 @@ button {
   padding: 12px;
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: #ff0404f6;
   background: linear-gradient(135deg, var(--accent), var(--accent-dark));
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -73,7 +75,7 @@ button {
 
 button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(43, 78, 169, 0.3);
+  box-shadow: 0 6px 14px rgba(255, 0, 0, 0.87);
 }
 
 button:disabled {
